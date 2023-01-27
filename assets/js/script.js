@@ -90,6 +90,7 @@ function startGame() {
 //Sets the content for the question being asked
 function setListContent(questionNum) {
   if (questionNum === 1) {
+    
     title.textContent = questionList.q1.question
     selBut1.textContent = "1. A";
     selBut2.textContent = "2. B";
