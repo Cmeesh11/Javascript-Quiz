@@ -30,3 +30,7 @@ pre, code {
 ol, ul {
   list-style: none;
 }
+
+button:hover {
+  background-color: rgba(122, 249, 207, 0.943);
+}

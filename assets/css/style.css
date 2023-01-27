@@ -47,5 +47,5 @@ button {
 }
 
 button:hover {
-  cursor: grab;
+  background-color: rgb(91, 182, 152);
 }
