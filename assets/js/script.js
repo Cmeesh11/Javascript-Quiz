@@ -45,7 +45,7 @@ var questionList = [
     answer: "Selects all of the list elements in the DOM"
   } ,
   {
-    question: "jQuery is a ____",
+    question: "jQuery is a(n) ____",
     options: ["GUI", "IDE", "API", "DOM"],
     answer: "API"
   } ,
@@ -60,7 +60,7 @@ var questionList = [
     answer: "//"
   } ,
   {
-    question: "Event listener is a ______.",
+    question: "Event listener is a(n) ______.",
     options: ["Library", "Method", "Object", "Variable"],
     answer: "Method"
   }
@@ -86,7 +86,7 @@ function setListContent(questionNum) {
       selBut = document.createElement("button");
       //Change styles of buttons
       selection.setAttribute("style", "text-align: center;")
-      selBut.setAttribute("style", "margin: 15px auto; width: 2em;");
+      selBut.setAttribute("style", "margin: 15px auto; width: 100%;");
       //Sets text of the buttons to the content of options array
       selBut.textContent = questionList[questionNum].options[i];
       //Appends the list items to the ul and the buttons to the list items
@@ -94,11 +94,16 @@ function setListContent(questionNum) {
       selection.appendChild(selBut);
     }
     //unhiding elements
-    selection.unhide();
-    selBut.unhide();
-    title.unhide();
+    if (selection.checkVisibility() === true && selBut.checkVisibility() === true && title.checkVisibility === true) {
+      selection.show();
+      selBut.show();
+      title.show();
+    }
   }
+//Determines point increase or timer decrease
+function onAnswer() {
 
+}
 
 //Brings user to next question after correct answer
 function makeNextQuestion() {
@@ -120,4 +125,8 @@ function randQuestion() {
 //starts the quiz
 startButton.addEventListener("click", startGame)
 
+//Listens to one of the generated buttons
+if (selBut != null) {
+selBut.addEventListener("click", onAnswer);
+}
 // highScoreButton.addEventListener("click", showLeaderboard)
