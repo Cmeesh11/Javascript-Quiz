@@ -12,4 +12,4 @@ When the user loads the page they have two options: To click start, or to view t
 Screenshot of application: 
 ![alt text](assets/images/picture.png)
 
-Link to application: 
+Link to application: https://cmeesh11.github.io/Javascript-Quiz/
