@@ -85,9 +85,27 @@ function startGame() {
   startButton.setAttribute("style", "display: none;");
   highScoreButton.setAttribute("style", "display: none");
   paragraph.setAttribute("style", "display: none");
-  
-  makeNextQuestion();
   addElements();
+  makeNextQuestion();
+}
+function addElements() {
+  // Adds styles and text content for the timer and score elements and appends them to aside
+  timerEl.setAttribute("style", "color: red");
+  scoreEl.setAttribute("style", "color: red");
+  timerEl.textContent = "Time: " + timer;
+  scoreEl.textContent = "Score: " + score;
+  aside.appendChild(timerEl);
+  aside.appendChild(scoreEl);
+}
+// Brings user to next question after correct answer
+function makeNextQuestion() {
+  // Call randQuestion and use the value to determine which question is being displayed
+  questionNum = randQuestion();
+  setListContent(questionNum);
+}
+function randQuestion() {
+  // Returns a random number based on the questionLists length
+  return Math.floor(Math.random() * questionList.length);
 }
 // Sets the content for the question being asked
 function setListContent(questionNum) {
@@ -132,27 +150,6 @@ function onAnswer(button, questionNum) {
   makeNextQuestion();
 }
 
-// Brings user to next question after correct answer
-function makeNextQuestion() {
-  // Call randQuestion and use the value to determine which question is being displayed
-  questionNum = randQuestion();
-  setListContent(questionNum);
-}
-function addElements() {
-  // Adds styles and text content for the timer and score elements and appends them to aside
-  timerEl.setAttribute("style", "color: red");
-  scoreEl.setAttribute("style", "color: red");
-  timerEl.textContent = "Time: " + timer;
-  scoreEl.textContent = "Score: " + score;
-  aside.appendChild(timerEl);
-  aside.appendChild(scoreEl);
-}
-
-function randQuestion() {
-  // Returns a random number based on the questionLists length
-  return Math.floor(Math.random() * questionList.length);
-}
-
 function endGame() {
   // Ensures that timer stops
   clearInterval(timerFunc);
@@ -195,7 +192,7 @@ function endGame() {
       var noScores = document.createElement("span");
       var backButton = document.createElement("button");
       noScores.setAttribute("style", "display: block;");
-      backButton.setAttribute("style", "display: block; margin: 0 auto; width: 20%; padding: 0;")
+      backButton.setAttribute("style", "display: block; margin: 10% auto; width: 20%; padding: 0;")
       backButton.id = "back"
       backButton.textContent = "Back";
       noScores.textContent = "There are currently no scores submitted"
@@ -247,6 +244,10 @@ selectionsList.addEventListener("click", function (event) {
 // Checks for form submit and stores values in localStorage
 main.addEventListener("submit", function(event) {
   event.preventDefault();
+  // Check to see if entered value is blank
+  if (initials.value == '') {
+    return;
+  }
   var existingEntries = JSON.parse(localStorage.getItem("scoresList"));
   if (existingEntries == null) {
     existingEntries = [];
@@ -255,6 +256,7 @@ main.addEventListener("submit", function(event) {
     initials: initials.value.trim(),
     score: score
     };
+    
   localStorage.setItem("score", JSON.stringify(userScore));
   existingEntries.push(userScore);
   localStorage.setItem("scoresList", JSON.stringify(existingEntries));
