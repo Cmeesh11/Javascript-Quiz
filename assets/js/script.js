@@ -3,9 +3,22 @@ var startButton = document.querySelector("#start");
 var highScoreButton = document.querySelector("#highscores");
 var title = document.querySelector("h1");
 var paragraph = document.querySelector("p");
-var main = document.querySelector("main");
+var main = document.querySelector(".content");
+var aside = document.querySelector("aside");
+var timerEl = document.createElement("p");
+var scoreEl = document.createElement("p");
+var timerFunc;
+var initials;
+var submit;
+var form;
+var userScore;
+
 var selection;
 var selBut;
+var questionNum;
+//sets score and timer to initial values
+var score = 0;
+var timer = 60;
 
 var question = document.createElement("h2");
 var selectionsList = document.createElement("ul");
@@ -73,6 +86,7 @@ function startGame() {
   paragraph.setAttribute("style", "display: none");
   
   makeNextQuestion();
+  addElements();
 }
 //Sets the content for the question being asked
 function setListContent(questionNum) {
@@ -87,46 +101,117 @@ function setListContent(questionNum) {
       //Change styles of buttons
       selection.setAttribute("style", "text-align: center;")
       selBut.setAttribute("style", "margin: 15px auto; width: 100%;");
+      //Gives buttons class name of 'button'
+      selBut.className = "option";
       //Sets text of the buttons to the content of options array
       selBut.textContent = questionList[questionNum].options[i];
       //Appends the list items to the ul and the buttons to the list items
       selectionsList.appendChild(selection);
       selection.appendChild(selBut);
     }
-    //unhiding elements
-    if (selection.checkVisibility() === true && selBut.checkVisibility() === true && title.checkVisibility === true) {
-      selection.show();
-      selBut.show();
-      title.show();
-    }
   }
 //Determines point increase or timer decrease
-function onAnswer() {
-
+function onAnswer(button, questionNum) {
+  if (button.textContent === questionList[questionNum].answer) {
+    score += 10;
+  } else {
+    timer -= 10;
+    timerEl.textContent = "Time: " + timer;
+  }
+  // Removes question from array
+  questionList.splice(questionNum, 1);
+  // Clears HTML elements inside of ul
+  selectionsList.innerHTML = '';
+  // Updates score
+  scoreEl.textContent = "Score: " + score;
+  // Ends game if all questions are asked
+  if (questionList.length === 0) {
+     return endGame();
+  }
+  makeNextQuestion();
 }
 
 //Brings user to next question after correct answer
 function makeNextQuestion() {
-  //Clear existing elements
-  if ((selection != null) && (selBut != null)) {
-    selection.hide();
-    selBut.hide();
-    title.hide();
-  }
   //Call randQuestion and use the value to determine which question is being displayed
-  var questionNum = randQuestion();
+  questionNum = randQuestion();
   setListContent(questionNum);
 }
+function addElements() {
+  // Adds styles and text content for the timer and score elements and appends them to aside
+  timerEl.setAttribute("style", "color: red");
+  scoreEl.setAttribute("style", "color: red");
+  timerEl.textContent = "Time: " + timer;
+  scoreEl.textContent = "Score: " + score;
+  aside.appendChild(timerEl);
+  aside.appendChild(scoreEl);
+}
 
-//Returns a random number from 1-10
 function randQuestion() {
-  return Math.floor(Math.random() * 10);
+  //Returns a random number based on the questionLists length
+  return Math.floor(Math.random() * questionList.length);
 }
-//starts the quiz
-startButton.addEventListener("click", startGame)
 
-//Listens to one of the generated buttons
-if (selBut != null) {
-selBut.addEventListener("click", onAnswer);
+function endGame() {
+  // Ensures that timer stops
+  clearInterval(timerFunc);
+  // Removes timer element and moves score element
+  timerEl.remove();
+  scoreEl.setAttribute("style", "font-size: 2em; color: red;");
+  main.appendChild(scoreEl);
+  // Changes title to "results"
+  title.innerHTML = "Results:";
+  // Removes content within ul
+  selectionsList.innerHTML = '';
+  // Creates a form element, an input element, and submit button for entering initials
+  form = document.createElement("form");
+  initials = document.createElement("input");
+  initials.setAttribute("type", "text");
+  initials.setAttribute("placeholder", "Enter Initials");
+  initials.setAttribute("style", "font-size: 2em;")
+  submit = document.createElement("button");
+  submit.setAttribute("style", "display: block; margin: 0 auto; width: 20%; padding: 0;")
+  submit.textContent = "Submit";
+  main.appendChild(form);
+  form.appendChild(initials);
+  form.appendChild(submit);
 }
+
+//starts the quiz
+startButton.addEventListener("click", function() {
+  startGame();
+  timerFunc = setInterval(function() {
+    timer--;
+    timerEl.textContent = "Time: " + timer;
+    if (timer <= 0) {
+      clearInterval(timerFunc);
+      return endGame();
+    }
+  }, 1000);
+});
+//Listens to one of the generated buttons
+selectionsList.addEventListener("click", function (event) {
+  var button = event.target;
+  if (button.className === 'option') {
+    onAnswer(button, questionNum);
+  } else {
+    return;
+  } 
+});
+
+// Checks for form submit and stores values in localStorage
+main.addEventListener("submit", function(event) {
+  event.preventDefault();
+  var submitBut = event.target;
+  if (submitBut.tagName === "button") {
+  userScore = {
+    initials: initials.trim(),
+    score: score
+  };
+  localStorage.setItem("userScore", JSON.stringify(userScore));
+} else {
+  return;
+}
+})
+
 // highScoreButton.addEventListener("click", showLeaderboard)
