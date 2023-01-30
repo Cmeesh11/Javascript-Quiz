@@ -186,8 +186,8 @@ function endGame() {
     // Create a go back button and a reset highscores button
     var reset = document.createElement("button");
     var back = document.createElement("button");
-    reset.setAttribute("style", "width: 50%; padding: 0;");
-    back.setAttribute("style", "width: 50%; padding: 0;")
+    reset.setAttribute("style", "width: 50%; padding: 0; margin: 10% auto;");
+    back.setAttribute("style", "width: 50%; padding: 0; margin: 10% auto;")
     reset.className = "reset";
     back.className = "back";
     reset.textContent = "Reset highscores";
