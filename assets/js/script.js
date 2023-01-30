@@ -1,4 +1,4 @@
-// variable assignment
+// Variable assignment
 var startButton = document.querySelector("#start");
 var highScoreButton = document.querySelector("#highscores");
 var title = document.querySelector("h1");
@@ -12,19 +12,20 @@ var initials;
 var submit;
 var form;
 var userScore;
+var highscores = [];
+var scoresList = [];
 
 var selection;
 var selBut;
 var questionNum;
-//sets score and timer to initial values
+// Sets score and timer to initial values
 var score = 0;
 var timer = 60;
 
 var question = document.createElement("h2");
 var selectionsList = document.createElement("ul");
 
-
-//Stores all of the questions and their respective options and answer
+// Stores all of the questions and their respective options and answer
 var questionList = [
   {
     question: "Which line uses jQuery to CREATE an element?",
@@ -80,7 +81,7 @@ var questionList = [
 ];
 
 function startGame() {
-  //Remove all container elements and aside elements to remove them from flow
+  // Remove all container elements and aside elements to remove them from flow
   startButton.setAttribute("style", "display: none;");
   highScoreButton.setAttribute("style", "display: none");
   paragraph.setAttribute("style", "display: none");
@@ -88,29 +89,29 @@ function startGame() {
   makeNextQuestion();
   addElements();
 }
-//Sets the content for the question being asked
+// Sets the content for the question being asked
 function setListContent(questionNum) {
-  //Appends the ul to the main tag
+  // Appends the ul to the main tag
   main.appendChild(selectionsList);
-  //Changes the title element to the content of the question item
+  // Changes the title element to the content of the question item
   title.textContent = questionList[questionNum].question;
   for (var i = 0; i < questionList[questionNum].options.length; i++) {
-      //creating number of list items and buttons equal to the number of options in question
+      // Creating number of list items and buttons equal to the number of options in question
       selection = document.createElement("li");
       selBut = document.createElement("button");
-      //Change styles of buttons
+      // Change styles of buttons
       selection.setAttribute("style", "text-align: center;")
       selBut.setAttribute("style", "margin: 15px auto; width: 100%;");
-      //Gives buttons class name of 'button'
+      // Gives buttons class name of 'button'
       selBut.className = "option";
-      //Sets text of the buttons to the content of options array
+      // Sets text of the buttons to the content of options array
       selBut.textContent = questionList[questionNum].options[i];
-      //Appends the list items to the ul and the buttons to the list items
+      // Appends the list items to the ul and the buttons to the list items
       selectionsList.appendChild(selection);
       selection.appendChild(selBut);
     }
   }
-//Determines point increase or timer decrease
+// Determines point increase or timer decrease
 function onAnswer(button, questionNum) {
   if (button.textContent === questionList[questionNum].answer) {
     score += 10;
@@ -131,9 +132,9 @@ function onAnswer(button, questionNum) {
   makeNextQuestion();
 }
 
-//Brings user to next question after correct answer
+// Brings user to next question after correct answer
 function makeNextQuestion() {
-  //Call randQuestion and use the value to determine which question is being displayed
+  // Call randQuestion and use the value to determine which question is being displayed
   questionNum = randQuestion();
   setListContent(questionNum);
 }
@@ -148,7 +149,7 @@ function addElements() {
 }
 
 function randQuestion() {
-  //Returns a random number based on the questionLists length
+  // Returns a random number based on the questionLists length
   return Math.floor(Math.random() * questionList.length);
 }
 
@@ -175,11 +176,55 @@ function endGame() {
   main.appendChild(form);
   form.appendChild(initials);
   form.appendChild(submit);
-}
+  }
+
+  function showLeaderboard() {
+    main.textContent = '';
+    aside.textContent = '';
+    // Create a new h1 element saying highscores
+    var highscoresTitle = document.createElement("h1");
+    highscoresTitle.textContent = "High Scores";
+    main.appendChild(highscoresTitle);
+    
+    // Create ordered list to put lis in
+    var highscoresList = document.createElement("ul");
+    main.appendChild(highscoresList);
+    // Convert highscores localStorage item from string into array
+    highscores = JSON.parse(localStorage.getItem("scoresList"));
+    if (highscores == null || highscores.length == 0) {
+      var noScores = document.createElement("span");
+      var backButton = document.createElement("button");
+      noScores.setAttribute("style", "display: block;");
+      backButton.setAttribute("style", "display: block; margin: 0 auto; width: 20%; padding: 0;")
+      backButton.id = "back"
+      backButton.textContent = "Back";
+      noScores.textContent = "There are currently no scores submitted"
+      main.appendChild(noScores);
+      main.appendChild(backButton);
+    }
+    // Bubble sort on the highscores array
+    for (var i = 0; i < highscores.length; i ++) {
+      for (var j = 0; j < highscores.length - 1 - i; j++) {
+        if (highscores[j].score < highscores[j + 1].score) {
+          var temp = highscores[j];
+          highscores[j] = highscores[j + 1];
+          highscores[j + 1] = temp;
+        }
+      }
+    }
+    // Create li elements to put scores in assigning it a value, and appending it to ul
+    for (var i = 0; i < highscores.length; i++) {
+      var highscoreItem = document.createElement("li");
+      highscoreItem.setAttribute("style", "color: red; font-size: 2em;");
+      highscoreItem.textContent = (i + 1) + ". " + highscores[i].initials + "- " + "Score: " + highscores[i].score;
+      highscoresList.appendChild(highscoreItem);
+    }
+  }
 
 //starts the quiz
 startButton.addEventListener("click", function() {
   startGame();
+  // Starts the timer
   timerFunc = setInterval(function() {
     timer--;
     timerEl.textContent = "Time: " + timer;
@@ -202,16 +247,29 @@ selectionsList.addEventListener("click", function (event) {
 // Checks for form submit and stores values in localStorage
 main.addEventListener("submit", function(event) {
   event.preventDefault();
-  var submitBut = event.target;
-  if (submitBut.tagName === "button") {
+  var existingEntries = JSON.parse(localStorage.getItem("scoresList"));
+  if (existingEntries == null) {
+    existingEntries = [];
+  }
   userScore = {
-    initials: initials.trim(),
+    initials: initials.value.trim(),
     score: score
-  };
-  localStorage.setItem("userScore", JSON.stringify(userScore));
-} else {
-  return;
-}
-})
+    };
+  localStorage.setItem("score", JSON.stringify(userScore));
+  existingEntries.push(userScore);
+  localStorage.setItem("scoresList", JSON.stringify(existingEntries));
+  document.location.reload(true);
+  });
 
-// highScoreButton.addEventListener("click", showLeaderboard)
+  // Brings user to highscores page on highscore button click
+  highScoreButton.addEventListener("click", showLeaderboard);
+
+  // Brings user back to start page when they click the back button in the highscores menu
+  main.addEventListener("click", function (event) {
+    var element = event.target;
+    if (element.id === "back") {
+      document.location.reload(true);
+    } else {
+      return;
+    }
+  })
