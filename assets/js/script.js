@@ -182,7 +182,16 @@ function endGame() {
     var highscoresTitle = document.createElement("h1");
     highscoresTitle.textContent = "High Scores";
     main.appendChild(highscoresTitle);
-    
+    // Create a go back button and a reset highscores button
+    var reset = document.createElement("button");
+    var back = document.createElement("button");
+    reset.setAttribute("style", "width: 50%; padding: 0;");
+    back.setAttribute("style", "width: 50%; padding: 0;")
+    reset.className = "reset";
+    back.className = "back";
+    reset.textContent = "Reset highscores";
+    back.textContent = "Back";
+  
     // Create ordered list to put lis in
     var highscoresList = document.createElement("ul");
     main.appendChild(highscoresList);
@@ -193,7 +202,7 @@ function endGame() {
       var backButton = document.createElement("button");
       noScores.setAttribute("style", "display: block;");
       backButton.setAttribute("style", "display: block; margin: 10% auto; width: 20%; padding: 0;")
-      backButton.id = "back"
+      backButton.className = "back";
       backButton.textContent = "Back";
       noScores.textContent = "There are currently no scores submitted"
       main.appendChild(noScores);
@@ -216,6 +225,8 @@ function endGame() {
       highscoreItem.textContent = (i + 1) + ". " + highscores[i].initials + "- " + "Score: " + highscores[i].score;
       highscoresList.appendChild(highscoreItem);
     }
+    main.appendChild(back);
+    main.appendChild(reset);
   }
 
 //starts the quiz
@@ -269,9 +280,17 @@ main.addEventListener("submit", function(event) {
   // Brings user back to start page when they click the back button in the highscores menu
   main.addEventListener("click", function (event) {
     var element = event.target;
-    if (element.id === "back") {
+    if (element.className === "back") {
       document.location.reload(true);
     } else {
       return;
+    }
+  })
+  // Reset highscores
+  main.addEventListener("click", function(event) {
+    var element = event.target;
+    if (element.className == "reset") {
+      localStorage.clear();
+      showLeaderboard();
     }
   })
