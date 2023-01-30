@@ -103,6 +103,7 @@ function makeNextQuestion() {
   questionNum = randQuestion();
   setListContent(questionNum);
 }
+
 function randQuestion() {
   // Returns a random number based on the questionLists length
   return Math.floor(Math.random() * questionList.length);
