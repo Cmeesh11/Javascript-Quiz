@@ -166,7 +166,7 @@ function endGame() {
   form = document.createElement("form");
   initials = document.createElement("input");
   initials.setAttribute("type", "text");
-  initials.setAttribute("placeholder", "Enter Initials");
+  initials.setAttribute("placeholder", "Enter Name/Initials");
   initials.setAttribute("style", "font-size: 2em;")
   submit = document.createElement("button");
   submit.setAttribute("style", "display: block; margin: 0 auto; width: 20%; padding: 0;")
